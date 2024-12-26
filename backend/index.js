@@ -31,7 +31,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('new-msg', (data) => {
-        messages.push(data.message);
+        messages.push({
+            msg: data.message,
+            user: data.user
+        });
         //console.log(data.message);
         io.emit('msg-change', {
             msgArr: messages 

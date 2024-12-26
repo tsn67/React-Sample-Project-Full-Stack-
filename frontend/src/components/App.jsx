@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from 'socket.io-client';
 
 function App() {
@@ -8,6 +8,7 @@ function App() {
     const [currentMessage, setCurrentMessage] = useState('');
     const [ws, setSocket] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [user, setUser] = useState(['unknown']);
 
     useEffect(()=> {
         const socket = io('http://localhost:3000');
@@ -15,7 +16,9 @@ function App() {
 
         socket.on('new-count', (json) => {
             setOnlineCount(json.count);
-            setMessages(json.msgArr);
+            if(json.msgArr) {
+                setMessages(json.msgArr);
+            }
         })      
         
         socket.on('msg-change', (json) => {
@@ -47,23 +50,29 @@ function App() {
         removeEditor();
         ws.emit('new-msg', {
             message: currentMessage,
+            user: user
         });
         setCurrentMessage('');
     }
 
+    function getUser(event) {
+        setUser(event.target.value);
+    }
+
     return <div className="container">
-    <div class="item-holder">
+        <h4>refreshing will erase username</h4>
         <h4>online: {onlineCount==1?onlineCount+" (you)":onlineCount}</h4>
+    <div class="item-holder">
         <div className="item"><h3>Work On Data</h3><p>unknown</p></div>
         <div className="item"><h3>Design files</h3><p>unknown</p></div>
         {messages.map((msg) => {
-            return <div className="item"><h3>{msg}</h3><p>unknown</p></div>
+            return <div className="item"><h3>{msg.msg}</h3><p>{msg.user}</p></div>
         })}
     </div>
     
     <div className="control">
       <button onClick={()=> {isEdiiting(true)}}>add item</button>
-      <input type="text" placeholder="unknown"/>
+      <input type="text" onChange={getUser} value={user}/>
     </div>
 
     <div className="editor-container" style={editting?editingStyle:null} >

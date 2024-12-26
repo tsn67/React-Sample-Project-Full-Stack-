@@ -18,12 +18,16 @@ body {
 }
 
 .container {
-    margin-top: 50px;
+    margin-top: 20px;
     display: flex;
     height: 90vh;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+.container > h4 {
+    color: white;
 }
 
 .item-holder {
